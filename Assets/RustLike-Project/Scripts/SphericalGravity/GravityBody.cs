@@ -34,7 +34,6 @@ public class GravityBody : MonoBehaviour
     private void Awake()
     {
         Body = GetComponent<Rigidbody>();
-        Body.useGravity = false;                                // we supply our own gravity
         Body.constraints = RigidbodyConstraints.FreezeRotation; // no tumbling from collisions; rotation is set manually
     }
 
