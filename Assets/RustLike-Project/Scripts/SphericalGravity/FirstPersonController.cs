@@ -149,7 +149,7 @@ public class FirstPersonController : MonoBehaviour
         Vector3 wish = transform.forward * moveInput.y + transform.right * moveInput.x;
         wish = Vector3.ClampMagnitude(wish, 1f) * speed;
 
-        float fallSpeed = Vector3.Dot(rb.velocity, up); // preserve the vertical (gravity/fall) component
+        float fallSpeed = Vector3.Dot(rb.linearVelocity, up); // preserve the vertical (gravity/fall) component
 
         // Jump: launch along "up" with the speed needed to reach jumpHeight under current gravity.
         if (jumpRequested && IsGrounded)
@@ -159,6 +159,6 @@ public class FirstPersonController : MonoBehaviour
         }
         jumpRequested = false;
 
-        rb.velocity = wish + up * fallSpeed;
+        rb.linearVelocity = wish + up * fallSpeed;
     }
 }
