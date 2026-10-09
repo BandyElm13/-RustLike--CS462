@@ -2,31 +2,35 @@ using UnityEngine;
 
 public class EnemyStats : MonoBehaviour
 {
+    [SerializeField] private int maxHealth = 100;
 
-    [SerializeField] private GameObject enemy;
+    private int currentEnemyHealth;
+    private WaveManager waveManager;
 
-    private static int currentEnemyHealth = 100;
-    void Start()
+    private void Start()
     {
-        
+        currentEnemyHealth = maxHealth;
+
+        waveManager = FindAnyObjectByType<WaveManager>();
     }
 
-    public void takedamage(int amount)
+    public void TakeDamage(int amount)
     {
         currentEnemyHealth -= amount;
-    }
 
-    private void enemyDeath()
-    {
-        if(currentEnemyHealth == 0)
+        if (currentEnemyHealth <= 0)
         {
-            enemy.SetActive(false);
+            EnemyDeath();
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void EnemyDeath()
     {
-        
+        if (waveManager != null)
+        {
+            waveManager.EnemyDied();
+        }
+
+        Destroy(gameObject);
     }
 }
