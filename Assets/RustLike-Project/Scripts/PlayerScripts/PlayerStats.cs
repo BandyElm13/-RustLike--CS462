@@ -7,20 +7,34 @@ public class PlayerStats : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Player Health = " + currentPlayerHealth);
+        // Automatically resets player health to full (100) whenever you press Start/Play
+        currentPlayerHealth = 100;
+        Debug.Log("Player Health Initialized = " + currentPlayerHealth);
     }
+
     public void takeDamage(int amount)
     {
         currentPlayerHealth -= amount;
     }
     
-    // Update is called once per frame
     void Update()
     {
+        // Press E to take 10 damage (1 segment)
         if(Input.GetKeyDown(KeyCode.E))
         {
-            takeDamage(20);
-            Debug.Log("new damage" + currentPlayerHealth);
+            takeDamage(10);
+            Debug.Log("New damage: " + currentPlayerHealth);
+        }
+
+        // Press R to add 10 health back (1 segment)
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            if (currentPlayerHealth < 100)
+            {
+                currentPlayerHealth += 10;
+                if (currentPlayerHealth > 100) currentPlayerHealth = 100;
+                Debug.Log("Healed! Current Health: " + currentPlayerHealth);
+            }
         }
     }
 }
