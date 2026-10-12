@@ -1,35 +1,52 @@
+
 using UnityEngine;
 
 public class EnemyStats : MonoBehaviour
 {
-    [SerializeField] private GameObject enemy;
+    [SerializeField] private int maxHealth = 100;
 
-    // 1. REMOVED 'static' so every individual enemy gets its own unique health pool!
-    [SerializeField] private int currentEnemyHealth = 100; 
-
-    // 2. Added a global static score variable that any script can read
+    // Global team score that any script can read (shown by ScoreDisplay)
     public static int currentScore = 0;
 
-    public void takedamage(int amount)
+    // Per-enemy health so every enemy gets its own health pool
+    private int currentEnemyHealth;
+    private WaveManager waveManager;
+    private bool isDead;
+
+    private void Start()
     {
-        // Reduce this specific enemy's health
-        currentEnemyHealth -= amount;
-        
-        // Check if they died as a result of taking damage
-        CheckEnemyDeath();
+        currentEnemyHealth = maxHealth;
+
+        waveManager = FindAnyObjectByType<WaveManager>();
     }
 
-    private void CheckEnemyDeath()
+    public void TakeDamage(int amount)
     {
-        // Checks if health dropped to or below 0
-        if(currentEnemyHealth <= 0)
-        {
-            // Add 10 points to the global team score!
-            currentScore += 10;
-            Debug.Log("Enemy Defeated! Global Score: " + currentScore);
+        if (isDead) return;
 
-            // Turn off this enemy object in the game
-            enemy.SetActive(false);
+        // Reduce this specific enemy's health
+        currentEnemyHealth -= amount;
+
+        if (currentEnemyHealth <= 0)
+        {
+            EnemyDeath();
         }
+    }
+
+    private void EnemyDeath()
+    {
+        // Guard so multiple hits in one frame don't count the kill twice
+        isDead = true;
+
+        // Add 10 points to the global team score!
+        currentScore += 10;
+        Debug.Log("Enemy Defeated! Global Score: " + currentScore);
+
+        if (waveManager != null)
+        {
+            waveManager.EnemyDied();
+        }
+
+        Destroy(gameObject);
     }
 }
