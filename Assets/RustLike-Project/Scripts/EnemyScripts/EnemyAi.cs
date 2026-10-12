@@ -19,8 +19,16 @@ public class EnemyAi : MonoBehaviour
     public float detectRange = 20f;
     [Tooltip("Give up the chase when the player gets farther than this (keep it above Detect Range so the enemy doesn't flicker between states).")]
     public float loseRange = 28f;
-    [Tooltip("Stop moving forward when this close (attack range later).")]
+    [Tooltip("Stop moving forward when this close.")]
     public float stopDistance = 1.5f;
+
+    [Header("Attack")]
+    [Tooltip("Hit the player when closer than this (keep it a bit above Stop Distance so the enemy can reach).")]
+    public float attackRange = 2f;
+    [Tooltip("Health removed per hit (10 = one HUD segment).")]
+    public int attackDamage = 10;
+    [Tooltip("Seconds between hits.")]
+    public float attackCooldown = 1f;
 
     [Header("Movement")]
     public float wanderSpeed = 3f;
@@ -46,6 +54,8 @@ public class EnemyAi : MonoBehaviour
     private Vector3 wanderDir;   // world-space direction, re-projected onto the surface each step
     private bool wanderIdle;
     private float nextWanderPick;
+    private PlayerStats playerStats;
+    private float nextAttackTime;
 
     private void Awake()
     {
@@ -62,7 +72,20 @@ public class EnemyAi : MonoBehaviour
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+        if (player != null) playerStats = player.GetComponentInParent<PlayerStats>();
         PickWanderDirection();
+    }
+
+    private void Update()
+    {
+        // --- Attack: hit the player on a cooldown while in range ---
+        if (playerStats == null || CurrentState != State.Chase || Time.time < nextAttackTime) return;
+
+        if (Vector3.Distance(transform.position, player.position) <= attackRange)
+        {
+            playerStats.takeDamage(attackDamage);
+            nextAttackTime = Time.time + attackCooldown;
+        }
     }
 
     private void FixedUpdate()
@@ -162,5 +185,6 @@ public class EnemyAi : MonoBehaviour
     {
         Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(transform.position, detectRange);
         Gizmos.color = Color.red;    Gizmos.DrawWireSphere(transform.position, loseRange);
+        Gizmos.color = Color.magenta; Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
