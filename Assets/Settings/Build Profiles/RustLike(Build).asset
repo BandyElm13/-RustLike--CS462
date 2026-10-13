@@ -23,6 +23,12 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
+    m_path: Assets/Scenes/Main Menu.unity
+    m_guid: 99c9720ab356a0642a771bea13969a05
+  - m_enabled: 1
+    m_path: Assets/Scenes/GameScene.unity
+    m_guid: 31dcfbe111b19ca4bbcd3ac5336ca5b7
+  - m_enabled: 0
     m_path: Assets/RustLike-Project/Scenes/TestScenes/TestScene1.unity
     m_guid: edb72ce14c19ec24b973c38c006028cf
   m_HasScriptingDefines: 0
