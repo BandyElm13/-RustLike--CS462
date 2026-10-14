@@ -24,6 +24,18 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
+
+        // --- ONE-TIME AUDIO TRIGGER ---
+        // when wave starts play wave theme for planet 1 enemies 
+        // note this is currently designed to start and loop when the first wave starts and keep going untill the player exvils
+        // when exvil to other planet starts will kill this and start that but exvil not implimneted yet.
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.TriggerMusicState("wavestart");
+        }
+        // ------------------------------
+
+
         StartWave();
     }
 
