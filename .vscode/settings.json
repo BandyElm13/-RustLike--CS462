@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "-Enter-Game-Name-Here--CS462.slnx"
+    "dotnet.defaultSolution": "-RustLike--CS462.slnx"
 }

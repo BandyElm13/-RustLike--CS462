@@ -9,7 +9,7 @@ public class PressPlay : MonoBehaviour
     // Must match a scene name added to File > Build Profiles (Scene List)
     [SerializeField] private string sceneToLoad = "GameScene";
     [SerializeField] private AudioClip clickSound;
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] public AudioSource audioSource;
 
     private Button button;
 
@@ -41,4 +41,6 @@ public class PressPlay : MonoBehaviour
 
         SceneManager.LoadScene(sceneToLoad);
     }
+
+
 }

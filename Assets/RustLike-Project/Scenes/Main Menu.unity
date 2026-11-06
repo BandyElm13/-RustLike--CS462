@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f1779d8f0841784788a5eb36c103486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PressPlay
-  sceneToLoad: GameScene
+  sceneToLoad: Planet-1-RobotWorld
   clickSound: {fileID: 8300000, guid: 2f3309dd365eb864cb6c55698878860e, type: 3}
   audioSource: {fileID: 1001475107}
 --- !u!1 &330585543

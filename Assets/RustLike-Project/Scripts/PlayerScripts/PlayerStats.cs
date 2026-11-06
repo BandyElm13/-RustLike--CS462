@@ -1,3 +1,4 @@
+using System.Data.Common;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +9,7 @@ public class PlayerStats : MonoBehaviour
     // Must match a scene name added to File > Build Profiles (Scene List)
     [SerializeField] private string gameOverScene = "Main Menu";
 
-    private bool isDead;
+    public bool isDead;
 
     void Start()
     {
@@ -39,6 +40,8 @@ public class PlayerStats : MonoBehaviour
         // FirstPersonController locks the cursor; free it so the menu buttons can be clicked
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        AudioManager.instance.TriggerMusicState("menustart");
 
         SceneManager.LoadScene(gameOverScene);
     }
