@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.1792453, g: 0.071992464, b: 0.049884304, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.215
+  m_FogDensity: 0.035
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.1509434, g: 0.047521856, b: 0.026343895, a: 1}
@@ -791,7 +791,8 @@ MonoBehaviour:
   startingEnemies: 30
   enemiesAddedPerWave: 3
   timeBetweenWaves: 5
-  enemyPrefab: {fileID: 2928692964940183163, guid: 6f81f5cecaa60334da519d5ccc831948, type: 3}
+  swordEnemyPrefab: {fileID: 8503799033264314096, guid: e412e21c20e5a174e8d6924ae00ba638, type: 3}
+  gunEnemyPrefab: {fileID: 5453247290049859437, guid: d8244c0658556cb4d8705727d975f102, type: 3}
   spawnPoints:
   - {fileID: 936756422}
   - {fileID: 477677967}
