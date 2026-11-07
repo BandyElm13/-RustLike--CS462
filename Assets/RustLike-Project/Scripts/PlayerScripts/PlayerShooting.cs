@@ -31,7 +31,7 @@ public class PlayerShooting : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, shootRange))
         {
-            EnemyStats enemy = hit.collider.GetComponent<EnemyStats>();
+            EnemyStats enemy = hit.collider.GetComponentInParent<EnemyStats>();
 
             if (enemy != null)
             {
