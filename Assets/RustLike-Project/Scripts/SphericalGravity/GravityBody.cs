@@ -1,56 +1,93 @@
+
 using UnityEngine;
 
-// Put this on anything that should fall toward the sphere - the player, props,
-// pickups, enemies. It replaces Unity's built-in gravity with a pull toward the
-// attractor's center, and (optionally) rotates the object so its feet point at
-// the surface.
 [RequireComponent(typeof(Rigidbody))]
 public class GravityBody : MonoBehaviour
 {
+    [Header("Gravity")]
     [Tooltip("The sphere to fall toward. Leave empty to auto-use the first GravityAttractor in the scene.")]
     public GravityAttractor attractor;
 
-    [Tooltip("Auto-rotate so this object's up points away from the sphere center. Turn OFF for the player - FirstPersonController handles its own rotation.")]
+    [Tooltip("Use ordinary world gravity instead of gravity toward a sphere. Enable this in flat dungeon scenes.")]
+    public bool useWorldGravity = false;
+
+    [Header("Surface Alignment")]
+    [Tooltip("Auto-rotate so this object's up points away from the sphere center.")]
     public bool alignToSurface = true;
 
-    [Tooltip("How fast the object rotates to match the surface (only used when Align To Surface is on).")]
+    [Tooltip("How fast the object rotates to match the surface.")]
     public float alignSpeed = 50f;
 
     public Rigidbody Body { get; private set; }
 
-    // The attractor actually in use (the assigned one, or the scene default).
-    public GravityAttractor ActiveAttractor => attractor != null ? attractor : GravityAttractor.Main;
+    public GravityAttractor ActiveAttractor =>
+        attractor != null ? attractor : GravityAttractor.Main;
 
-    // Direction considered "up" for this body right now (straight away from the center).
+    // World gravity uses the world's Y axis as up.
+    // Spherical gravity uses the direction away from the sphere's center.
     public Vector3 UpDirection
     {
         get
         {
             GravityAttractor a = ActiveAttractor;
-            return a != null ? (transform.position - a.Center).normalized : transform.up;
+
+            if (useWorldGravity || a == null)
+                return Vector3.up;
+
+            return (transform.position - a.Center).normalized;
+        }
+    }
+
+    // Gravity strength used by the player jump calculation.
+    public float CurrentGravity
+    {
+        get
+        {
+            GravityAttractor a = ActiveAttractor;
+
+            if (!useWorldGravity && a != null)
+                return a.gravity;
+
+            return Physics.gravity.magnitude;
         }
     }
 
     private void Awake()
     {
         Body = GetComponent<Rigidbody>();
-        Body.constraints = RigidbodyConstraints.FreezeRotation; // no tumbling from collisions; rotation is set manually
+
+        // Gravity is applied manually in FixedUpdate.
+        Body.useGravity = false;
+
+        Body.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     private void FixedUpdate()
     {
         GravityAttractor a = ActiveAttractor;
-        if (a == null) return;
 
-        Vector3 up = UpDirection;
-
-        // Pull toward the center. Acceleration mode is mass-independent, like real gravity.
-        Body.AddForce(-up * a.gravity, ForceMode.Acceleration);
-
-        if (alignToSurface)
+        if (!useWorldGravity && a != null)
         {
-            Quaternion target = Quaternion.FromToRotation(transform.up, up) * transform.rotation;
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, alignSpeed * Time.fixedDeltaTime);
+            // Spherical gravity.
+            Vector3 up = UpDirection;
+            Body.AddForce(-up * a.gravity, ForceMode.Acceleration);
+
+            if (alignToSurface)
+            {
+                Quaternion target =
+                    Quaternion.FromToRotation(transform.up, up) * transform.rotation;
+
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    target,
+                    alignSpeed * Time.fixedDeltaTime
+                );
+            }
+        }
+        else
+        {
+            // Ordinary world gravity for flat environments.
+            Body.AddForce(Physics.gravity, ForceMode.Acceleration);
         }
     }
 }

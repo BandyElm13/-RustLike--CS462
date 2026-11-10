@@ -11,6 +11,9 @@ namespace ProceduralDungeons
         [SerializeField] private Transform[] enemySpawnPoints;
         [SerializeField] private Transform[] treasureSpawnPoints;
 
+        [Header("Enemy Spawning")]
+        [SerializeField] private EnemySpawnProfile enemySpawnProfile;
+
         private RoomConnection[] connections;
 
         public Transform PlayerSpawnPoint =>
@@ -54,6 +57,34 @@ namespace ProceduralDungeons
                 CacheConnections();
 
             return connections;
+        }
+
+        public void SpawnEnemies(System.Random random)
+        {
+            if (enemySpawnProfile == null)
+                return;
+
+            if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
+                return;
+
+            foreach (Transform spawnPoint in enemySpawnPoints)
+            {
+                if (spawnPoint == null)
+                    continue;
+
+                GameObject enemyPrefab =
+                    enemySpawnProfile.GetRandomEnemy(random);
+
+                if (enemyPrefab == null)
+                    continue;
+
+                Instantiate(
+                    enemyPrefab,
+                    spawnPoint.position,
+                    spawnPoint.rotation,
+                    transform
+                );
+            }
         }
 
         // Override this in specialized room scripts (CombatRoom, ShopRoom, etc.)

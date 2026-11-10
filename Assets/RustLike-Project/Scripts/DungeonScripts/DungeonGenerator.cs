@@ -154,8 +154,15 @@ namespace ProceduralDungeons
 
             CloseUnusedConnections(layout);
 
-            if (spawnPlayerAfterGeneration)
+            // Spawn enemies after all rooms have been generated.
+            foreach (Vector2Int position in orderedPositions)
+            {
+                spawnedRooms[position].SpawnEnemies(random);
+            }
+
+            if (spawnPlayerAfterGeneration){
                 SpawnPlayer();
+            }
 
             Debug.Log(
                 $"Generated dungeon with {spawnedRooms.Count} rooms. Seed: {GeneratedSeed}",
@@ -219,6 +226,14 @@ namespace ProceduralDungeons
             );
 
             spawnedPlayer.name = playerPrefab.name;
+
+            GravityBody gravityBody = spawnedPlayer.GetComponent<GravityBody>();
+
+            if (gravityBody != null)
+            {
+                gravityBody.useWorldGravity = true;
+                gravityBody.attractor = null;
+            }
         }
 
         private bool ValidateConfiguration()
