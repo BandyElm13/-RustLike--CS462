@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TransitionToDungen : MonoBehaviour
+public class Transition : MonoBehaviour
 {
     [SerializeField] private string dungeonScene = "Dungeon";
     private float speed = 50f;
@@ -11,6 +11,7 @@ public class TransitionToDungen : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("Scene Was Loaded");
             SceneManager.LoadScene(dungeonScene);
         }
     }
@@ -18,5 +19,6 @@ public class TransitionToDungen : MonoBehaviour
     void Update()
     {
         transform.Rotate(0, speed * Time.deltaTime, 0, Space.Self);
+        transform.Rotate(1, speed * Time.deltaTime, 0, Space.Self);
     }
 }
