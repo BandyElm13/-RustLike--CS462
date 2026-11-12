@@ -41,7 +41,7 @@ public class PlayerStats : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        AudioManager.instance.TriggerMusicState("menustart");
+        AudioManager.instance.TriggerMusicState("player_death_theme");
 
         SceneManager.LoadScene(gameOverScene);
     }
