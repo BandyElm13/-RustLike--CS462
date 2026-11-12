@@ -6,11 +6,13 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private float shootRange = 100f;
     [SerializeField] private int damage = 25;
+    [SerializeField] private BulletTracer tracerPrefab;
+    [SerializeField] private Transform tracerPoint;
 
     [Header("Timing Variables")]
     private float timestamp;
-    public static float energy;
-    private float chargeBuffer;
+    public static float energy = 0f;
+    private float chargeBuffer = 0f;
     [SerializeField] private float fireRate = 1f;
     [SerializeField] private float chargeRate = 1f;
     [SerializeField] private float chargeDelay = 2f;
@@ -40,7 +42,7 @@ public class PlayerShooting : MonoBehaviour
 
     private bool canShoot()
     {
-        if ((Time.time < timestamp) || (energy <= energyCost)) return false;
+        if ((Time.time < timestamp) || (energy < energyCost)) return false;
         timestamp = Time.time + fireRate;
         return true;
     }
@@ -54,7 +56,10 @@ public class PlayerShooting : MonoBehaviour
             new Vector3(0.5f, 0.5f, 0f)
         );
 
-        if (Physics.Raycast(ray, out RaycastHit hit, shootRange))
+        bool didHit = Physics.Raycast(ray, out RaycastHit hit, shootRange);
+        if (tracerPrefab != null) Instantiate(tracerPrefab).Fire(tracerPoint ? tracerPoint.position : ray.origin, didHit ? hit.point : ray.GetPoint(shootRange));
+
+        if (didHit)
         {
             EnemyStats enemy = hit.collider.GetComponentInParent<EnemyStats>();
 

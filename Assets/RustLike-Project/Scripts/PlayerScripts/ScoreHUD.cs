@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ScoreHUD : MonoBehaviour
 {
-    public Vector2 position = new Vector2(12f, -188f);
+    public Vector2 position = new Vector2(-12f, -12f);
     public Color orange = new Color32(255, 121, 0, 255);
     public Color housingColor = new Color32(25, 25, 27, 255);
     public TMP_FontAsset customFont;
@@ -18,7 +18,8 @@ public class ScoreHUD : MonoBehaviour
         Image housing = HealthHUD.CreateElement<Image>(transform, "Housing", position, size);
         housing.color = new Color(housingColor.r, housingColor.g, housingColor.b, 0.9f);
         housing.sprite = HealthHUD.CreateSprite(128, 28, (x, y) => HealthHUD.RoundedDistance(x, y, 64f, 14f, 64f, 14f, 6.75f));
-        text = HealthHUD.CreateText(transform, "Score", position, size, orange, customFont);
+        housing.rectTransform.anchorMin = housing.rectTransform.anchorMax = housing.rectTransform.pivot = Vector2.one;
+        text = HealthHUD.CreateText(housing.transform, "Score", Vector2.zero, size, orange, customFont);
     }
 
     private void Update()

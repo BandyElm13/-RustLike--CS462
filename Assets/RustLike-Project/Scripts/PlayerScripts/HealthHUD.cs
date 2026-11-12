@@ -9,6 +9,7 @@ public class HealthHUD : MonoBehaviour
 {
     [FormerlySerializedAs("maximumHealth")] public float maximum = 100f;
     public Vector2 position = new Vector2(12f, -12f);
+    public float segmentHeight = 42f;
     public float initialBootDelay = 0.2f;
     public float segmentBootDelay = 0.1f;
     public AudioClip bootSound;
@@ -18,8 +19,8 @@ public class HealthHUD : MonoBehaviour
     public Color housingColor = new Color32(25, 25, 27, 255);
     public TMP_FontAsset customFont;
 
-    private const int SegmentCount = 12;
-    private readonly Image[] segments = new Image[SegmentCount];
+    protected virtual int SegmentCount => 12;
+    private Image[] segments;
     private int lastLit = -1;
 
     protected virtual string Title => "Health";
@@ -27,18 +28,22 @@ public class HealthHUD : MonoBehaviour
 
     private void Start()
     {
-        Image housing = CreateElement<Image>(transform, "Housing", position, new Vector2(256f, 80f));
+        int height = Mathf.RoundToInt(segmentHeight) + 38;
+        Image housing = CreateElement<Image>(transform, "Housing", position, new Vector2(256f, height));
         housing.color = new Color(housingColor.r, housingColor.g, housingColor.b, 0.9f);
-        housing.sprite = CreateSprite(256, 80, (x, y) => Mathf.Min(
-            RoundedDistance(x, y, 40f, 66f, 40f, 14f, 6.75f),
-            RoundedDistance(x, y, 128f, 30.5f, 128f, 28.5f, 6.75f)));
+        housing.sprite = CreateSprite(256, height, (x, y) => Mathf.Min(
+            RoundedDistance(x, y, 40f, height - 14f, 40f, 14f, 6.75f),
+            RoundedDistance(x, y, 128f, (height - 19f) / 2f, 128f, (height - 23f) / 2f, 6.75f)));
 
         CreateText(transform, Title, position, new Vector2(80f, 28f), orange, customFont);
 
-        Sprite sprite = CreateSprite(60, 168, (x, y) => RoundedDistance(x, y, 30f, 84f, 30f, 84f, 22f));
+        int spriteHeight = Mathf.RoundToInt(segmentHeight * 4f);
+        Sprite sprite = CreateSprite(60, spriteHeight, (x, y) => RoundedDistance(x, y, 30f, spriteHeight / 2f, 30f, spriteHeight / 2f, 22f));
+        float spacing = 240f / SegmentCount;
+        segments = new Image[SegmentCount];
         for (int i = 0; i < SegmentCount; i++)
         {
-            segments[i] = CreateElement<Image>(transform, Title + "_Segment_" + (i + 1), position + new Vector2(10f + i * 20f, -28f), new Vector2(15f, 42f));
+            segments[i] = CreateElement<Image>(transform, Title + "_Segment_" + (i + 1), position + new Vector2(10f + i * spacing, -28f), new Vector2(spacing * 0.75f, segmentHeight));
             segments[i].sprite = sprite;
             segments[i].gameObject.SetActive(false);
         }
