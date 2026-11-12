@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TMPro;
 
-public class ProceduralHealthBarHUD : MonoBehaviour
+public class HealthHUD : MonoBehaviour
 {
-    public int maximumHealth = 100;
+    [FormerlySerializedAs("maximumHealth")] public float maximum = 100f;
+    public Vector2 position = new Vector2(12f, -12f);
     public float initialBootDelay = 0.2f;
     public float segmentBootDelay = 0.1f;
     public AudioClip bootSound;
@@ -18,24 +20,40 @@ public class ProceduralHealthBarHUD : MonoBehaviour
 
     private const int SegmentCount = 12;
     private readonly Image[] segments = new Image[SegmentCount];
-    private int lastHealth = -1;
+    private int lastLit = -1;
+
+    protected virtual string Title => "Health";
+    protected virtual float Value => PlayerStats.currentPlayerHealth;
 
     private void Start()
     {
-        CreateHousing();
-        CreateTitle();
-        CreateSegments();
+        Image housing = CreateElement<Image>(transform, "Housing", position, new Vector2(256f, 80f));
+        housing.color = new Color(housingColor.r, housingColor.g, housingColor.b, 0.9f);
+        housing.sprite = CreateSprite(256, 80, (x, y) => Mathf.Min(
+            RoundedDistance(x, y, 40f, 66f, 40f, 14f, 6.75f),
+            RoundedDistance(x, y, 128f, 30.5f, 128f, 28.5f, 6.75f)));
+
+        CreateText(transform, Title, position, new Vector2(80f, 28f), orange, customFont);
+
+        Sprite sprite = CreateSprite(60, 168, (x, y) => RoundedDistance(x, y, 30f, 84f, 30f, 84f, 22f));
+        for (int i = 0; i < SegmentCount; i++)
+        {
+            segments[i] = CreateElement<Image>(transform, Title + "_Segment_" + (i + 1), position + new Vector2(10f + i * 20f, -28f), new Vector2(15f, 42f));
+            segments[i].sprite = sprite;
+            segments[i].gameObject.SetActive(false);
+        }
+
         StartCoroutine(BootUp());
     }
 
     private void Update()
     {
-        int health = Mathf.Clamp(PlayerStats.currentPlayerHealth, 0, maximumHealth);
-        if (health == lastHealth) return;
-        lastHealth = health;
+        int lit = Mathf.FloorToInt(Mathf.Clamp01(Value / maximum) * SegmentCount);
+        if (lit == lastLit) return;
+        lastLit = lit;
 
         for (int i = 0; i < SegmentCount; i++)
-            segments[i].color = health >= (i + 1) * maximumHealth / SegmentCount ? orange : inactiveOrange;
+            segments[i].color = i < lit ? orange : inactiveOrange;
     }
 
     private IEnumerator BootUp()
@@ -55,44 +73,11 @@ public class ProceduralHealthBarHUD : MonoBehaviour
         }
     }
 
-    private void CreateHousing()
-    {
-        Image image = CreateElement<Image>("Housing", new Vector2(12f, -12f), new Vector2(256f, 80f));
-        image.color = new Color(housingColor.r, housingColor.g, housingColor.b, 0.9f);
-        image.sprite = CreateSprite(256, 80, (x, y) => Mathf.Min(
-            RoundedDistance(x, y, 40f, 66f, 40f, 14f, 6.75f),
-            RoundedDistance(x, y, 128f, 30.5f, 128f, 28.5f, 6.75f)));
-    }
-
-    private void CreateTitle()
-    {
-        TextMeshProUGUI text = CreateElement<TextMeshProUGUI>("Health_Title", new Vector2(12f, -12f), new Vector2(80f, 28f));
-        if (customFont != null) text.font = customFont;
-        text.text = "Health";
-        text.color = orange;
-        text.fontSize = 18f;
-        text.alignment = TextAlignmentOptions.Center;
-    }
-
-    private void CreateSegments()
-    {
-        Sprite sprite = CreateSprite(60, 168, (x, y) => RoundedDistance(x, y, 30f, 84f, 30f, 84f, 22f));
-
-        for (int i = 0; i < SegmentCount; i++)
-        {
-            Image image = CreateElement<Image>("Health_Segment_" + (i + 1), new Vector2(22f + i * 20f, -40f), new Vector2(15f, 42f));
-            image.sprite = sprite;
-            image.color = inactiveOrange;
-            image.gameObject.SetActive(false);
-            segments[i] = image;
-        }
-    }
-
-    private T CreateElement<T>(string name, Vector2 position, Vector2 size) where T : Graphic
+    public static T CreateElement<T>(Transform parent, string name, Vector2 position, Vector2 size) where T : Graphic
     {
         GameObject obj = new GameObject(name, typeof(RectTransform), typeof(T));
         RectTransform rect = obj.GetComponent<RectTransform>();
-        rect.SetParent(transform, false);
+        rect.SetParent(parent, false);
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
         rect.anchoredPosition = position;
         rect.sizeDelta = size;
@@ -102,7 +87,18 @@ public class ProceduralHealthBarHUD : MonoBehaviour
         return graphic;
     }
 
-    private static Sprite CreateSprite(int width, int height, Func<float, float, float> distance)
+    public static TextMeshProUGUI CreateText(Transform parent, string content, Vector2 position, Vector2 size, Color color, TMP_FontAsset font)
+    {
+        TextMeshProUGUI text = CreateElement<TextMeshProUGUI>(parent, content + "_Text", position, size);
+        if (font != null) text.font = font;
+        text.text = content;
+        text.color = color;
+        text.fontSize = 18f;
+        text.alignment = TextAlignmentOptions.Center;
+        return text;
+    }
+
+    public static Sprite CreateSprite(int width, int height, Func<float, float, float> distance)
     {
         Texture2D texture = new Texture2D(width, height) { wrapMode = TextureWrapMode.Clamp };
         Color[] pixels = new Color[width * height];
@@ -116,7 +112,7 @@ public class ProceduralHealthBarHUD : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 1);
     }
 
-    private static float RoundedDistance(float x, float y, float centerX, float centerY, float halfWidth, float halfHeight, float radius)
+    public static float RoundedDistance(float x, float y, float centerX, float centerY, float halfWidth, float halfHeight, float radius)
     {
         float qx = Mathf.Abs(x - centerX) - (halfWidth - radius);
         float qy = Mathf.Abs(y - centerY) - (halfHeight - radius);

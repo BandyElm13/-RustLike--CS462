@@ -551,7 +551,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a892a396ddae2146b9ce601fca8762f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CRTHealthHUD
+  m_EditorClassIdentifier: Assembly-CSharp::HealthHUD
   healthSegments:
   - {fileID: 6290989933548029621}
   - {fileID: 2208774023237664118}

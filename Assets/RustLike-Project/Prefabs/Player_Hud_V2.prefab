@@ -116,7 +116,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a892a396ddae2146b9ce601fca8762f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProceduralHealthBarHUD
+  m_EditorClassIdentifier: Assembly-CSharp::HealthHUD
   maximumHealth: 100
   initialBootDelay: 0.2
   segmentBootDelay: 0.25
