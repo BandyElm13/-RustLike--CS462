@@ -42,10 +42,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8583602730419833395}
   - component: {fileID: 9031716365449339746}
-  - component: {fileID: 2668864046551965173}
   - component: {fileID: 957411434928366040}
   - component: {fileID: 5368796710866294201}
   - component: {fileID: 1203283255390407633}
+  - component: {fileID: 46809208877494435}
   m_Layer: 0
   m_Name: Sword-Robot-Enemy
   m_TagString: Untagged
@@ -63,8 +63,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 626996858283650710}
   m_Father: {fileID: 0}
@@ -96,21 +96,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2668864046551965173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8503799033264314096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 927da3db78e31684086c431987436fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GravityBody
-  attractor: {fileID: 0}
-  alignToSurface: 1
-  alignSpeed: 50
 --- !u!114 &957411434928366040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,8 +110,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SwordEnemyStats
   maxHealth: 150
   player: {fileID: 0}
-  detectRange: 20
-  loseRange: 28
+  detectRange: 100
+  loseRange: 101
   stopDistance: 1.5
   wanderSpeed: 2
   chaseSpeed: 3.5
@@ -182,9 +167,25 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 3
-  m_Height: 2
+  m_Height: 12
   m_Direction: 1
   m_Center: {x: 0, y: 6, z: 0}
+--- !u!114 &46809208877494435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8503799033264314096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b25e5c4c03eea240ab8645850c26112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GravityBody
+  attractor: {fileID: 0}
+  useWorldGravity: 0
+  alignToSurface: 1
+  alignSpeed: 50
 --- !u!1001 &2175487406736154102
 PrefabInstance:
   m_ObjectHideFlags: 0

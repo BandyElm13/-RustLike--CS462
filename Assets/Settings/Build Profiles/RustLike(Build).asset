@@ -23,14 +23,14 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/Scenes/Main Menu.unity
+    m_path: Assets/RustLike-Project/Scenes/Main Menu.unity
     m_guid: 99c9720ab356a0642a771bea13969a05
-  - m_enabled: 0
-    m_path: Assets/RustLike-Project/Scenes/TestScenes/TestScene1.unity
-    m_guid: edb72ce14c19ec24b973c38c006028cf
   - m_enabled: 1
-    m_path: Assets/Scenes/GameScene.unity
+    m_path: Assets/RustLike-Project/Scenes/Planet-1-RobotWorld.unity
     m_guid: 31dcfbe111b19ca4bbcd3ac5336ca5b7
+  - m_enabled: 1
+    m_path: Assets/RustLike-Project/Scenes/Dungeon.unity
+    m_guid: 349fc81031cf1bf46a283ce3f269a8be
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:

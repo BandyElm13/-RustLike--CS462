@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5801278046362402401}
   - component: {fileID: 2965388911290580014}
-  - component: {fileID: 2604963151320777276}
   - component: {fileID: 2823302314455584952}
   - component: {fileID: 801566012328917943}
   - component: {fileID: 4651531008057125495}
+  - component: {fileID: 7256730212954213953}
   m_Layer: 0
   m_Name: Gun-Robot-Enemy
   m_TagString: Untagged
@@ -31,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13.88568, y: 101.49, z: -5.62991}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8874064589763426747}
   m_Father: {fileID: 0}
@@ -64,21 +64,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2604963151320777276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5453247290049859437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 927da3db78e31684086c431987436fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GravityBody
-  attractor: {fileID: 0}
-  alignToSurface: 1
-  alignSpeed: 50
 --- !u!136 &2823302314455584952
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -99,7 +84,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 3
+  m_Height: 4.5
   m_Direction: 1
   m_Center: {x: 0, y: 2, z: 0}
 --- !u!114 &801566012328917943
@@ -135,8 +120,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GunEnemyStats
   maxHealth: 40
   player: {fileID: 0}
-  detectRange: 20
-  loseRange: 30
+  detectRange: 100
+  loseRange: 101
   stopDistance: 1.5
   wanderSpeed: 4.5
   chaseSpeed: 6.5
@@ -157,6 +142,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aimTimeout: 2.5
+--- !u!114 &7256730212954213953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5453247290049859437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b25e5c4c03eea240ab8645850c26112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GravityBody
+  attractor: {fileID: 0}
+  useWorldGravity: 0
+  alignToSurface: 1
+  alignSpeed: 50
 --- !u!1 &7132763994375331172
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +204,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d1d4b0d1e6f130144ad411772babf58e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.82
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d1d4b0d1e6f130144ad411772babf58e, type: 3}
       propertyPath: m_LocalPosition.z

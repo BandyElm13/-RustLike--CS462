@@ -153,9 +153,10 @@ public class FirstPersonController : MonoBehaviour
 
         // Jump: launch along "up" with the speed needed to reach jumpHeight under current gravity.
         if (jumpRequested && IsGrounded)
-        {
-            float gravity = gravityBody.ActiveAttractor != null ? gravityBody.ActiveAttractor.gravity : 9.81f;
-            fallSpeed = Mathf.Sqrt(2f * gravity * jumpHeight);
+            {
+                float gravity = gravityBody.CurrentGravity;
+
+                fallSpeed = Mathf.Sqrt(2f * gravity * jumpHeight);
         }
         jumpRequested = false;
 

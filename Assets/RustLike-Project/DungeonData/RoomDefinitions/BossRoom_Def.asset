@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c68cc06bfc10a4d4697d2f55c2bccca3, type: 3}
+  m_Name: BossRoom_Def
+  m_EditorClassIdentifier: Assembly-CSharp::ProceduralDungeons.RoomDefinition
+  displayName: Boos Room
+  roomType: 4
+  roomPrefab: {fileID: 1642137365796218278, guid: 595470bbd8740484dbb7b0c92ba9bce7, type: 3}
+  weight: 1
+  minimumDepth: 0
+  maximumDepth: 999
