@@ -3,14 +3,17 @@ using TMPro;
 
 public class ScoreDisplay : MonoBehaviour
 {
-    // The slot where we will link our TextMeshPro object
-    [SerializeField] private TextMeshProUGUI scoreTextElement;
-    [SerializeField] private TextMeshProUGUI energyTextElement;
+    private TextMeshProUGUI scoreTextElement;
 
     void Start()
     {
-        // Automatically resets the global score back to 0 whenever you press Play
-        EnemyStats.currentScore = 0;
+        // 🛠️ AUTOMATIC LINK: Unity finds its own text component instantly on startup
+        scoreTextElement = GetComponent<TextMeshProUGUI>();
+
+        // Resets the score to 0 on Play
+        EnemyStats.currentScore = 0;   //WHY IS THIS NOT PLAYERSTATS????
+
+        ApplySharpnessSettings();
     }
 
     void Update()
@@ -21,13 +24,29 @@ public class ScoreDisplay : MonoBehaviour
             EnemyStats.currentScore += 10;
         }
 
-        // 1. Read the global score from the EnemyStats script
-        int liveScore = EnemyStats.currentScore;
-        float liveEnergy = PlayerShooting.energy;
+        if (scoreTextElement == null) return;
 
-        // 2. Update the text display dynamically on the screen
-        // ToString("D3") turns numbers like '10' into '010' for an arcade CRT look!
-        scoreTextElement.text = "Score : " + liveScore.ToString("D3");
-        energyTextElement.text = "Energy : " + liveEnergy.ToString("F1");
+        int liveScore = EnemyStats.currentScore;
+
+        // Formats "Score : " to your orange hex, and the numbers stay white
+        scoreTextElement.text = "<color=#FF7F00>Score : </color>" + liveScore.ToString("D3");
+    }
+
+    private void ApplySharpnessSettings()
+    {
+        if (scoreTextElement != null)
+        {
+            scoreTextElement.isOrthographic = true;
+            scoreTextElement.extraPadding = true;
+
+            if (scoreTextElement.fontSharedMaterial != null)
+            {
+                scoreTextElement.fontSharedMaterial.EnableKeyword("SHADER_OPTION_SHARPNESS");
+                scoreTextElement.fontSharedMaterial.SetFloat("_Sharpness", 1f);
+                scoreTextElement.fontSharedMaterial.SetFloat("_OutlineWidth", 0f);
+                scoreTextElement.fontSharedMaterial.SetFloat("_GradientScale", 10f);
+            }
+            scoreTextElement.UpdateMeshPadding();
+        }
     }
 }
