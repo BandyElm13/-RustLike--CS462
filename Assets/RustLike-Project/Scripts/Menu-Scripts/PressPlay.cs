@@ -34,11 +34,14 @@ public class PressPlay : MonoBehaviour
 
         if (clickSound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(clickSound);
+            audioSource.PlayOneShot(clickSound, GameAudioSettings.Sfx);
             // Loading the scene would cut the sound off, so wait for it to finish
             yield return new WaitForSecondsRealtime(clickSound.length);
         }
 
+        // New run: Time Alive and score from the previous run are cleared here.
+        RunTimer.ResetRun();
+        EnemyStats.currentScore = 0;
         SceneManager.LoadScene(sceneToLoad);
     }
 

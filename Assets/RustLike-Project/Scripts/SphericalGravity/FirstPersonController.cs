@@ -31,6 +31,12 @@ public class FirstPersonController : MonoBehaviour
     [Tooltip("Which layers count as ground. Leave as Everything, or restrict it to your level geometry.")]
     public LayerMask groundMask = ~0;
 
+    [Header("Slopes")]
+    [Tooltip("Steepest hill (degrees from the planet's up) you can walk up. Steeper surfaces make you slide off.")]
+    public float maxSlopeAngle = 50f;
+    [Tooltip("Small push into the ground while walking, so you follow hills down instead of launching off them.")]
+    public float groundStick = 2f;
+
     [Header("Look")]
     [Tooltip("Mouse look sensitivity.")]
     public float lookSensitivity = 2f;
@@ -49,6 +55,12 @@ public class FirstPersonController : MonoBehaviour
     [Tooltip("How quickly the FOV eases toward its target.")]
     public float fovLerpSpeed = 8f;
 
+    [Header("Aim Down Sights (set by PlayerShooting)")]
+    [Tooltip("FOV while aiming = base FOV x this.")]
+    public float aimFovMultiplier = 0.7f;
+    [Tooltip("Mouse sensitivity while aiming = normal x this.")]
+    public float aimSensitivityMultiplier = 0.6f;
+
     [Header("Weapon hook (for a later gun component)")]
     [Tooltip("Empty child under the camera where a gun model/component will attach. Optional for now.")]
     public Transform weaponSocket;
@@ -59,6 +71,8 @@ public class FirstPersonController : MonoBehaviour
     public bool IsSprinting { get; private set; }
     public bool IsMoving { get; private set; }
     public bool IsGrounded { get; private set; }
+    // Set by the gun while right mouse is held: zooms, slows look, and blocks sprinting.
+    public bool IsAiming { get; set; }
     // A ray straight out of the camera - use this for aiming/shooting later.
     public Ray AimRay => new Ray(cameraTransform.position, cameraTransform.forward);
 
@@ -66,6 +80,8 @@ public class FirstPersonController : MonoBehaviour
     private Rigidbody rb;
     private Camera cam;
     private Transform cameraTransform;
+    private CapsuleCollider bodyCollider;
+    private Vector3 groundNormal = Vector3.up;
 
     private Vector2 moveInput;   // x = strafe, y = forward
     private float yawDelta;      // accumulated mouse-X, applied to the body in FixedUpdate
@@ -84,6 +100,23 @@ public class FirstPersonController : MonoBehaviour
 
         cam = GetComponentInChildren<Camera>();
         if (cam != null) cameraTransform = cam.transform;
+
+        bodyCollider = GetComponent<CapsuleCollider>();
+
+        // We set velocity directly every physics step, so friction only makes the player
+        // stick to walls and slopes. Use a frictionless material unless one is assigned.
+        Collider col = GetComponent<Collider>();
+        if (col != null && col.sharedMaterial == null)
+        {
+            col.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
+            {
+                dynamicFriction = 0f,
+                staticFriction = 0f,
+                frictionCombine = PhysicsMaterialCombine.Minimum,
+                bounciness = 0f,
+                bounceCombine = PhysicsMaterialCombine.Minimum
+            };
+        }
     }
 
     private void Start()
@@ -98,13 +131,14 @@ public class FirstPersonController : MonoBehaviour
     {
         // --- Gather input ---
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        IsSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        IsSprinting = !IsAiming && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
         IsMoving = moveInput.sqrMagnitude > 0.01f;
 
         if (Input.GetKeyDown(KeyCode.Space)) jumpRequested = true;
 
-        float mouseX = Input.GetAxis("Mouse X") * lookSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * lookSensitivity;
+        float sensitivity = lookSensitivity * (IsAiming ? aimSensitivityMultiplier : 1f);
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
 
         // Yaw turns the whole body; applied in FixedUpdate (physics rotation), just banked here.
         yawDelta += mouseX;
@@ -121,11 +155,13 @@ public class FirstPersonController : MonoBehaviour
             cameraTransform.localRotation = Quaternion.Euler(pitch, 0f, currentRoll);
         }
 
-        // Sprint FOV: only when actually sprinting forward.
+        // Sprint FOV only when actually sprinting forward; aiming zooms in.
         if (cam != null)
         {
             bool sprintingForward = IsSprinting && moveInput.y > 0.1f;
-            float targetFov = baseFov + (sprintingForward ? sprintFovBoost : 0f);
+            float targetFov = IsAiming
+                ? baseFov * aimFovMultiplier
+                : baseFov + (sprintingForward ? sprintFovBoost : 0f);
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, fovLerpSpeed * Time.deltaTime);
         }
     }
@@ -134,9 +170,7 @@ public class FirstPersonController : MonoBehaviour
     {
         Vector3 up = gravityBody.UpDirection;
 
-        // Ground check: cast "down" (toward the sphere) from the body center.
-        // Starting inside the capsule means the ray ignores the player's own collider.
-        IsGrounded = Physics.Raycast(transform.position, -up, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore);
+        IsGrounded = CheckGround(up);
 
         // --- Rotation: keep feet on the surface, then apply the player's yaw ---
         Quaternion align = Quaternion.FromToRotation(transform.up, up) * rb.rotation;
@@ -151,15 +185,50 @@ public class FirstPersonController : MonoBehaviour
 
         float fallSpeed = Vector3.Dot(rb.linearVelocity, up); // preserve the vertical (gravity/fall) component
 
-        // Jump: launch along "up" with the speed needed to reach jumpHeight under current gravity.
-        if (jumpRequested && IsGrounded)
-            {
-                float gravity = gravityBody.CurrentGravity;
-
-                fallSpeed = Mathf.Sqrt(2f * gravity * jumpHeight);
-        }
+        bool jump = jumpRequested && IsGrounded;
         jumpRequested = false;
 
-        rb.linearVelocity = wish + up * fallSpeed;
+        if (jump)
+        {
+            // Launch along "up" with the speed needed to reach jumpHeight under current gravity.
+            fallSpeed = Mathf.Sqrt(2f * gravityBody.CurrentGravity * jumpHeight);
+            rb.linearVelocity = wish + up * fallSpeed;
+        }
+        else if (IsGrounded && fallSpeed <= 0.1f)
+        {
+            // Walk along the ground's surface: up hills instead of into them,
+            // and down hills instead of flying off the top.
+            Vector3 along = Vector3.ProjectOnPlane(wish, groundNormal);
+            if (along.sqrMagnitude > 0.0001f) along = along.normalized * wish.magnitude;
+            rb.linearVelocity = along - groundNormal * groundStick;
+        }
+        else
+        {
+            // Airborne (or rising from a jump): keep gravity's vertical component.
+            rb.linearVelocity = wish + up * fallSpeed;
+        }
+    }
+
+    // Sphere-cast "down" (toward the planet) from the body center. A sphere catches the
+    // ground on slopes and edges where a single thin ray would miss. Casts ignore the
+    // player's own collider because they start inside it.
+    private bool CheckGround(Vector3 up)
+    {
+        groundNormal = up;
+
+        float scale = Mathf.Max(transform.lossyScale.x, transform.lossyScale.z);
+        float radius = bodyCollider != null ? bodyCollider.radius * scale * 0.9f : 0.45f;
+        Vector3 origin = bodyCollider != null ? transform.TransformPoint(bodyCollider.center) : transform.position;
+        float distance = Mathf.Max(0.01f, groundCheckDistance - radius);
+
+        if (!Physics.SphereCast(origin, radius, -up, out RaycastHit hit, distance, groundMask, QueryTriggerInteraction.Ignore))
+            return false;
+
+        // Too steep to stand on: treat as a wall and let gravity slide us off.
+        if (Vector3.Angle(hit.normal, up) > maxSlopeAngle)
+            return false;
+
+        groundNormal = hit.normal;
+        return true;
     }
 }

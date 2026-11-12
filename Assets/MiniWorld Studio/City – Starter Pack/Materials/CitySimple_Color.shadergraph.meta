@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4287c9b5befb1034a820c382759865be
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 380946
+  packageName: Low Poly City Starter Pack - Mini World Studio
+  packageVersion: 1.0
+  assetPath: "Assets/MiniWorld Studio/City \u2013 Starter Pack/Materials/CitySimple_Color.shadergraph"
+  uploadId: 936688

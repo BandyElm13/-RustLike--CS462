@@ -40,7 +40,7 @@ public class ButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         label.text = prefix + originalText + suffix;
 
         if (hoverSound != null && audioSource != null)
-            audioSource.PlayOneShot(hoverSound);
+            audioSource.PlayOneShot(hoverSound, GameAudioSettings.Sfx);
     }
 
     private void Unhighlight()

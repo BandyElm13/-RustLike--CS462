@@ -3,6 +3,9 @@ using TMPro;
 
 public class ScoreDisplay : MonoBehaviour
 {
+    [Tooltip("Testing only: T = +10 score.")]
+    [SerializeField] private bool enableDebugKeys = false;
+
     private TextMeshProUGUI scoreTextElement;
 
     void Start()
@@ -10,8 +13,8 @@ public class ScoreDisplay : MonoBehaviour
         // 🛠️ AUTOMATIC LINK: Unity finds its own text component instantly on startup
         scoreTextElement = GetComponent<TextMeshProUGUI>();
 
-        // Resets the score to 0 on Play
-        EnemyStats.currentScore = 0;   //WHY IS THIS NOT PLAYERSTATS????
+        // Score is reset once per run (PressPlay / entering Play mode), not per scene,
+        // so it carries from the planet into the dungeon and onto the death screen.
 
         ApplySharpnessSettings();
     }
@@ -19,7 +22,7 @@ public class ScoreDisplay : MonoBehaviour
     void Update()
     {
         // TESTING SHORTCUT: Press T to manually give yourself 10 points
-        if (Input.GetKeyDown(KeyCode.T)) 
+        if (enableDebugKeys && Input.GetKeyDown(KeyCode.T))
         {
             EnemyStats.currentScore += 10;
         }

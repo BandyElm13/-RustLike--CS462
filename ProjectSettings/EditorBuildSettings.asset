@@ -11,5 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/RustLike-Project/Scenes/Planet-1-RobotWorld.unity
     guid: 31dcfbe111b19ca4bbcd3ac5336ca5b7
+  - enabled: 1
+    path: Assets/RustLike-Project/Scenes/Dungeon.unity
+    guid: 349fc81031cf1bf46a283ce3f269a8be
+  - enabled: 1
+    path: Assets/RustLike-Project/Scenes/DeathScene.unity
+    guid: a783897147a78ec49814849193e770b5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

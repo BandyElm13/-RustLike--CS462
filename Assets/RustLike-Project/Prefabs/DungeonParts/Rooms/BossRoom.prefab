@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6834160983190065737}
   - component: {fileID: 5383353231860752152}
+  - component: {fileID: 4730118826450012345}
   m_Layer: 0
   m_Name: BossRoom
   m_TagString: Untagged
@@ -263,3 +264,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1632602169009358053, guid: ef15ddac558d5954eb67555950048b9f, type: 3}
   m_PrefabInstance: {fileID: 7446536535923351118}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4730118826450012345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642137365796218278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06628abe2fe8d0e1ef52ed0544eecd48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DungeonExit
+  returnScene: Planet-1-RobotWorld
+  exitFloor: {fileID: 5832506530948800100}
+  detectHeight: 3
+  killDepth: 15
+  messageFont: {fileID: 11400000, guid: 8fcd3fa95b6b7bf48a4078ae83368051, type: 2}
+  messageColor: {r: 1, g: 0.5372549, b: 0, a: 1}
+  messageDuration: 2

@@ -280,7 +280,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5200358472644993277}
   - component: {fileID: 5608277497842157533}
-  - component: {fileID: 1124033500632298181}
   m_Layer: 0
   m_Name: Gun-2.0
   m_TagString: Untagged
@@ -329,21 +328,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1, y: 0.1, z: 0.3}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1124033500632298181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3563128468087413551}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c69170b86d703648a0d15b3fcb03496, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GunPickUp
-  bruh: {fileID: 3563128468087413551}
-  playerbruh: {fileID: 0}
-  bullet: {fileID: 0}
 --- !u!1 &5061349212182939052
 GameObject:
   m_ObjectHideFlags: 0

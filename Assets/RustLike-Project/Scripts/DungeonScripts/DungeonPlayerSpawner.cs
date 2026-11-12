@@ -1,39 +1,56 @@
 using UnityEngine;
 using ProceduralDungeons;
 
+// Moves an existing scene player to the dungeon's start room.
+// If DungeonGenerator already spawns the player (Spawn Player After Generation),
+// leave Player empty — this script then only makes sure the dungeon exists.
 public class DungeonPlayerSpawner : MonoBehaviour
 {
     [SerializeField] private DungeonGenerator dungeonGenerator;
+    [Tooltip("A player object in this scene. Do NOT assign the Player prefab asset here.")]
     [SerializeField] private Transform player;
 
     private void Start()
     {
-        // Generate the dungeon first.
-        dungeonGenerator.GenerateDungeon();
-
-        // Get the starting room's spawn point.
-        Transform spawnPoint = dungeonGenerator.PlayerSpawnPoint;
-
-        if (spawnPoint == null)
+        if (dungeonGenerator == null)
         {
-            Debug.LogError("Player spawn point was not found!");
+            Debug.LogError("DungeonPlayerSpawner: Dungeon Generator is not assigned.", this);
             return;
         }
 
-        // Temporarily disable CharacterController if present.
-        CharacterController controller =
-            player.GetComponent<CharacterController>();
+        // Generate only once, whichever Start runs first.
+        if (dungeonGenerator.SpawnedRooms.Count == 0)
+            dungeonGenerator.GenerateDungeon();
 
-        if (controller != null)
-            controller.enabled = false;
+        if (player == null)
+            return;
 
-        // Move and rotate the player.
-        player.SetPositionAndRotation(
-            spawnPoint.position,
-            spawnPoint.rotation
-        );
+        // A prefab asset reference has no valid scene; moving it would edit the asset.
+        if (!player.gameObject.scene.IsValid())
+        {
+            Debug.LogWarning(
+                "DungeonPlayerSpawner: Player references a prefab asset, not a scene object — skipping. " +
+                "DungeonGenerator spawns the player itself when Spawn Player After Generation is on.",
+                this
+            );
+            return;
+        }
 
-        if (controller != null)
-            controller.enabled = true;
+        Transform spawnPoint = dungeonGenerator.PlayerSpawnPoint;
+        if (spawnPoint == null)
+        {
+            Debug.LogError("Player spawn point was not found!", this);
+            return;
+        }
+
+        Rigidbody body = player.GetComponent<Rigidbody>();
+        if (body != null)
+        {
+            body.position = spawnPoint.position;
+            body.rotation = spawnPoint.rotation;
+            body.linearVelocity = Vector3.zero;
+        }
+
+        player.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
     }
 }

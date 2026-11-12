@@ -31,7 +31,7 @@ public class PressQuit : MonoBehaviour
 
         if (clickSound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(clickSound);
+            audioSource.PlayOneShot(clickSound, GameAudioSettings.Sfx);
             // Quitting would cut the sound off, so wait for it to finish
             yield return new WaitForSecondsRealtime(clickSound.length);
         }

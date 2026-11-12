@@ -17,8 +17,12 @@ public class EnemyStats : MonoBehaviour
     [Header("Shared health (override defaults on subclasses via Reset / inspector)")]
     [SerializeField] protected int maxHealth = 100;
 
-    // Global team score (ScoreDisplay reads this)
+    // Global team score (ScoreDisplay reads this). Reset per run by PressPlay.
     public static int currentScore = 0;
+
+    // Start every Play session at 0, even with Domain Reload off (e.g. Play pressed in a planet scene).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetScoreOnPlay() => currentScore = 0;
 
     [Header("Target")]
     public Transform player;
@@ -51,6 +55,7 @@ public class EnemyStats : MonoBehaviour
     protected GravityBody gravityBody;
     protected Rigidbody rb;
     protected EnemyAnimations enemyAnimations;
+    private EnemyHitFlash hitFlash;
 
     private int currentEnemyHealth;
     private WaveManager waveManager;
@@ -65,15 +70,35 @@ public class EnemyStats : MonoBehaviour
     /// <summary>Subclass: prefer facing the player this frame.</summary>
     protected bool facePlayer;
 
+    private static PhysicsMaterial noFriction;
+    private static PhysicsMaterial NoFriction => noFriction != null ? noFriction : (noFriction = new PhysicsMaterial("EnemyNoFriction")
+    {
+        dynamicFriction = 0f,
+        staticFriction = 0f,
+        frictionCombine = PhysicsMaterialCombine.Minimum,
+        bounciness = 0f,
+        bounceCombine = PhysicsMaterialCombine.Minimum
+    });
+
     protected virtual void Awake()
     {
         gravityBody = GetComponent<GravityBody>();
         gravityBody.alignToSurface = false;
         rb = GetComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // Velocity is set directly each step; friction would just snag enemies on hills and rocks.
+        Collider col = GetComponent<Collider>();
+        if (col != null && col.sharedMaterial == null)
+            col.sharedMaterial = NoFriction;
+
         enemyAnimations = GetComponent<EnemyAnimations>();
         if (enemyAnimations == null)
             enemyAnimations = GetComponentInChildren<EnemyAnimations>();
+
+        // Red overlay when shot (added here so every enemy prefab gets it).
+        hitFlash = GetComponent<EnemyHitFlash>();
+        if (hitFlash == null) hitFlash = gameObject.AddComponent<EnemyHitFlash>();
     }
 
     protected virtual void Start()
@@ -243,12 +268,22 @@ public class EnemyStats : MonoBehaviour
         if (isDead) return;
         if (amount <= 0) return;
 
+        if (hitFlash != null) hitFlash.Flash();
+
         currentEnemyHealth -= amount;
         if (currentEnemyHealth <= 0)
         {
             currentEnemyHealth = 0;
             EnemyDeath();
         }
+    }
+
+    /// <summary>Kill outright (e.g. fell off the map). Counts as a normal death.</summary>
+    public void Kill()
+    {
+        if (isDead) return;
+        currentEnemyHealth = 0;
+        EnemyDeath();
     }
 
     private void EnemyDeath()

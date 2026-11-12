@@ -13,6 +13,10 @@ GameObject:
   - component: {fileID: 2577513702425130149}
   - component: {fileID: 2088587177457235976}
   - component: {fileID: 5823687603071473382}
+  - component: {fileID: 7203418865530917746}
+  - component: {fileID: 3916627014583302268}
+  - component: {fileID: 3307716291004422089}
+  - component: {fileID: 5281944470213650177}
   - component: {fileID: 3470959967467182024}
   m_Layer: 5
   m_Name: Player_Hud_V2
@@ -120,7 +124,7 @@ MonoBehaviour:
   maximumHealth: 100
   initialBootDelay: 0.2
   segmentBootDelay: 0.25
-  bootSound: {fileID: 8300000, guid: 51f03d491d4f1ad40a3aff38c80faf17, type: 3}
+  bootSound: {fileID: 8300000, guid: 52773fdb77d2b5744a827cc0de3da227, type: 3}
   bootVolume: 0.5
   playSoundPerSegment: 1
   pitchShiftUp: 0
@@ -128,6 +132,50 @@ MonoBehaviour:
   inactiveOrange: {r: 1, g: 0.4745098, b: 0, a: 0.5019608}
   housingColor: {r: 0.09803922, g: 0.09803922, b: 0.105882354, a: 1}
   housingEdge: {r: 0.21568628, g: 0.21568628, b: 0.22352941, a: 1}
+  customFont: {fileID: 11400000, guid: 8fcd3fa95b6b7bf48a4078ae83368051, type: 2}
+--- !u!114 &7203418865530917746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869798136155901907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c827c551e4edf4f93333bda3e46ba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnergyHUD
+  maximum: 30
+  position: {x: 12, y: -100}
+  segmentHeight: 21
+  initialBootDelay: 3.4
+  segmentBootDelay: 0.25
+  bootSound: {fileID: 8300000, guid: 52773fdb77d2b5744a827cc0de3da227, type: 3}
+  bootVolume: 0.5
+  orange: {r: 1, g: 0.4745098, b: 0, a: 1}
+  inactiveOrange: {r: 1, g: 0.4745098, b: 0, a: 0.5019608}
+  housingColor: {r: 0.09803922, g: 0.09803922, b: 0.105882354, a: 1}
+  customFont: {fileID: 11400000, guid: 8fcd3fa95b6b7bf48a4078ae83368051, type: 2}
+  segmentCount: 15
+--- !u!114 &3916627014583302268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869798136155901907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd1130a616793ee14519d109b5daf9dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimerHUD
+  position: {x: 0, y: -12}
+  width: 180
+  bodyHeight: 21
+  title: Time
+  timeFontSize: 22
+  orange: {r: 1, g: 0.4745098, b: 0, a: 1}
+  housingColor: {r: 0.09803922, g: 0.09803922, b: 0.105882354, a: 1}
   customFont: {fileID: 11400000, guid: 8fcd3fa95b6b7bf48a4078ae83368051, type: 2}
 --- !u!23 &3470959967467182024
 MeshRenderer:
@@ -196,7 +244,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4421185914555871390
 RectTransform:
   m_ObjectHideFlags: 0
@@ -328,3 +376,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7d7e8f78647ac9459c8ea65879fc87d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreDisplay
+--- !u!114 &3307716291004422089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869798136155901907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68aead5b650fb9970b1428f371fc3db1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrosshairHUD
+  size: 6
+  color: {r: 1, g: 1, b: 1, a: 0.9}
+  outlineColor: {r: 0, g: 0, b: 0, a: 0.6}
+--- !u!114 &5281944470213650177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869798136155901907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef4303644c30784ebbde4161bb9596f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreHUD
+  position: {x: -12, y: -12}
+  width: 180
+  bodyHeight: 21
+  title: Score
+  scoreFontSize: 22
+  digits: 3
+  orange: {r: 1, g: 0.4745098, b: 0, a: 1}
+  housingColor: {r: 0.09803922, g: 0.09803922, b: 0.105882354, a: 1}
+  customFont: {fileID: 11400000, guid: 8fcd3fa95b6b7bf48a4078ae83368051, type: 2}

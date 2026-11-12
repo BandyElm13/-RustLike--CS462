@@ -20,11 +20,15 @@ public class HealthHUD : MonoBehaviour
     public TMP_FontAsset customFont;
 
     protected virtual int SegmentCount => 12;
-    private Image[] segments;
-    private int lastLit = -1;
+    private Image[] segmentImages;
+    private float lastFill = -1f;
 
     protected virtual string Title => "Health";
     protected virtual float Value => PlayerStats.currentPlayerHealth;
+    // The player's real maximum; 'maximum' is only the fallback before the player exists.
+    protected virtual float Maximum => PlayerStats.maxPlayerHealth > 0 ? PlayerStats.maxPlayerHealth : maximum;
+    // Health: whole bars on/off so it's easy to read. Energy overrides this to fill gradually.
+    protected virtual bool GradualFill => false;
 
     private void Start()
     {
@@ -40,12 +44,12 @@ public class HealthHUD : MonoBehaviour
         int spriteHeight = Mathf.RoundToInt(segmentHeight * 4f);
         Sprite sprite = CreateSprite(60, spriteHeight, (x, y) => RoundedDistance(x, y, 30f, spriteHeight / 2f, 30f, spriteHeight / 2f, 22f));
         float spacing = 240f / SegmentCount;
-        segments = new Image[SegmentCount];
+        segmentImages = new Image[SegmentCount];
         for (int i = 0; i < SegmentCount; i++)
         {
-            segments[i] = CreateElement<Image>(transform, Title + "_Segment_" + (i + 1), position + new Vector2(10f + i * spacing, -28f), new Vector2(spacing * 0.75f, segmentHeight));
-            segments[i].sprite = sprite;
-            segments[i].gameObject.SetActive(false);
+            segmentImages[i] = CreateElement<Image>(transform, Title + "_Segment_" + (i + 1), position + new Vector2(10f + i * spacing, -28f), new Vector2(spacing * 0.75f, segmentHeight));
+            segmentImages[i].sprite = sprite;
+            segmentImages[i].gameObject.SetActive(false);
         }
 
         StartCoroutine(BootUp());
@@ -53,12 +57,17 @@ public class HealthHUD : MonoBehaviour
 
     private void Update()
     {
-        int lit = Mathf.FloorToInt(Mathf.Clamp01(Value / maximum) * SegmentCount);
-        if (lit == lastLit) return;
-        lastLit = lit;
+        float fill = Mathf.Clamp01(Value / Mathf.Max(0.0001f, Maximum)) * SegmentCount;
 
+        // Whole bars: lit or empty. Rounded up so any health left shows at least one bar.
+        if (!GradualFill) fill = Mathf.Ceil(fill - 0.0001f);
+
+        if (Mathf.Abs(fill - lastFill) < 0.001f) return;
+        lastFill = fill;
+
+        // Gradual mode: the segment currently filling brightens smoothly (energy recharge).
         for (int i = 0; i < SegmentCount; i++)
-            segments[i].color = i < lit ? orange : inactiveOrange;
+            segmentImages[i].color = Color.Lerp(inactiveOrange, orange, Mathf.Clamp01(fill - i));
     }
 
     private IEnumerator BootUp()
@@ -70,10 +79,10 @@ public class HealthHUD : MonoBehaviour
 
         yield return new WaitForSeconds(initialBootDelay);
 
-        foreach (Image segment in segments)
+        foreach (Image segment in segmentImages)
         {
             segment.gameObject.SetActive(true);
-            if (bootSound != null) audioSource.PlayOneShot(bootSound, bootVolume);
+            if (bootSound != null) audioSource.PlayOneShot(bootSound, bootVolume * GameAudioSettings.Sfx);
             yield return new WaitForSeconds(segmentBootDelay);
         }
     }

@@ -222,7 +222,8 @@ Transform:
   m_LocalPosition: {x: -3.069842e-11, y: 0.006149936, z: -3.2501822e-12}
   m_LocalScale: {x: 0.99999994, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6620573180219883457}
   m_Father: {fileID: -6411812514282187789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &-394570574647395121
@@ -871,7 +872,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7942238193011437936
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2083,6 +2084,7 @@ GameObject:
   - component: {fileID: 9073032760031867372}
   - component: {fileID: -8104334930667907410}
   - component: {fileID: 8408892350333659932}
+  - component: {fileID: -643831032547130670}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2105,6 +2107,7 @@ Transform:
   m_Children:
   - {fileID: 7999520525867003029}
   - {fileID: 7942238193011437936}
+  - {fileID: 1774258209019432087}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4788246327763746711
@@ -2252,7 +2255,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1460ecc1944224f8d7882a69c5f780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  gameOverScene: Main Menu
+  maxHealth: 100
+  regenPerSecond: 3
+  regenDelay: 4
+  outOfCombatDelay: 5
+  outOfCombatRegenPerSecond: 15
+  gameOverScene: DeathScene
+  enableDebugKeys: 0
+  damageVignette: {fileID: 2800000, guid: a62e819fba949f247bab172ff27d5d0b, type: 3}
+  vignetteColor: {r: 1, g: 1, b: 1, a: 1}
+  vignetteDuration: 1
+  vignetteFadeSharpness: 2.5
+  damageSound: {fileID: 8300000, guid: b20859cc8d1ce864c9aadf20c4da667a, type: 3}
+  damageSoundVolume: 0.8
+  damagePitchRange: {x: 0.85, y: 1.15}
   isDead: 0
 --- !u!114 &-8104334930667907410
 MonoBehaviour:
@@ -2269,11 +2285,19 @@ MonoBehaviour:
   playerCamera: {fileID: 39399862813292437}
   shootRange: 100
   damage: 25
-  fireRate: 1
-  chargeRate: 1
-  chargeDelay: 2
-  energyMax: 10
+  tracerPrefab: {fileID: 0}
+  tracerPoint: {fileID: 6620573180219883457}
+  fireRate: 0.12
+  chargeRate: 8
+  chargeDelay: 1.5
+  energyMax: 30
   energyCost: 1
+  shootSound: {fileID: 8300000, guid: 1a23fef6d953c9a4fb0c19936866beb6, type: 3}
+  shootVolume: 0.6
+  shootPitchRange: {x: 0.9, y: 1.1}
+  handModel: {fileID: -8679921383154817045}
+  aimHandOffset: {x: 0.9, y: 0.35, z: 0}
+  aimSpeed: 12
 --- !u!114 &8408892350333659932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2396,4 +2420,80 @@ Transform:
   m_Children:
   - {fileID: -8310038294459768621}
   m_Father: {fileID: -2930972676091124930}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &6728351904417263093
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8413092851601441755}
+    m_Modifications:
+    - target: {fileID: 1869798136155901907, guid: 3b8da8ee6894c1c4495d4537d55d87e6, type: 3}
+      propertyPath: m_Name
+      value: Player_Hud_V2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3b8da8ee6894c1c4495d4537d55d87e6, type: 3}
+--- !u!224 &1774258209019432087 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5026164623711248738, guid: 3b8da8ee6894c1c4495d4537d55d87e6, type: 3}
+  m_PrefabInstance: {fileID: 6728351904417263093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-643831032547130670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8299686658269122747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848eccad7c96e4921007cc9b8e97226f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootsteps
+  clips: []
+  landClip: {fileID: 0}
+  audioSource: {fileID: 0}
+  walkStepDistance: 2.2
+  sprintStepDistance: 3
+  minSpeed: 0.5
+  minAirTimeForLanding: 0.25
+  walkVolume: 0.45
+  sprintVolume: 0.6
+  landVolume: 0.75
+  pitchRange: {x: 0.9, y: 1.1}
+--- !u!1 &4402871956610349121
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6620573180219883457}
+  m_Layer: 0
+  m_Name: Muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6620573180219883457
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4402871956610349121}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.006, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1980594247151746924}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

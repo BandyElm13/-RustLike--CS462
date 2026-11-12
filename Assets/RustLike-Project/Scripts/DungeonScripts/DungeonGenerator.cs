@@ -54,7 +54,8 @@ namespace ProceduralDungeons
 
         private void Start()
         {
-            if (generateOnStart)
+            // Skip if something else (e.g. DungeonPlayerSpawner) already generated this frame.
+            if (generateOnStart && spawnedRooms.Count == 0)
                 GenerateDungeon();
         }
 

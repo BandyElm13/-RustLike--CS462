@@ -31,6 +31,9 @@ MonoBehaviour:
   - m_enabled: 1
     m_path: Assets/RustLike-Project/Scenes/Dungeon.unity
     m_guid: 349fc81031cf1bf46a283ce3f269a8be
+  - m_enabled: 1
+    m_path: Assets/RustLike-Project/Scenes/DeathScene.unity
+    m_guid: a783897147a78ec49814849193e770b5
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
