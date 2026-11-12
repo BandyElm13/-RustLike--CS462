@@ -66,8 +66,17 @@ public class DeathSequence : MonoBehaviour
     [Tooltip("AudioManager music state to switch to when continuing.")]
     [SerializeField] private string continueMusicState = "menustart";
 
+    [Header("Skip")]
+    [Tooltip("Button that skips the rest of the sequence and goes straight to Continue Scene.")]
+    [SerializeField] private UnityEngine.UI.Button skipButton;
+    [SerializeField] private AudioClip skipClickSound;
+
+    private bool leaving;
+
     private void Start()
     {
+        if (skipButton != null) skipButton.onClick.AddListener(Skip);
+
         // Gameplay locks the cursor; free it on the death screen.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -136,6 +145,36 @@ public class DeathSequence : MonoBehaviour
             audioSource.PlayOneShot(deathSound, deathSoundVolume * GameAudioSettings.Sfx);
     }
 
+    /// <summary>Skip button: stop the sequence and go to the Main Menu right away.</summary>
+    public void Skip()
+    {
+        if (leaving) return;
+        StopAllCoroutines();
+        if (skipButton != null) skipButton.interactable = false;
+        StartCoroutine(SkipRoutine());
+    }
+
+    private IEnumerator SkipRoutine()
+    {
+        if (skipClickSound != null && audioSource != null)
+        {
+            audioSource.volume = 1f; // in case the music fade had lowered it
+            audioSource.PlayOneShot(skipClickSound, GameAudioSettings.Sfx);
+            // Loading the scene would cut the click off, so let it play.
+            yield return new WaitForSecondsRealtime(skipClickSound.length);
+        }
+        LoadContinueScene();
+    }
+
+    private void LoadContinueScene()
+    {
+        if (leaving || string.IsNullOrEmpty(continueScene)) return;
+        leaving = true;
+        if (AudioManager.instance != null && !string.IsNullOrEmpty(continueMusicState))
+            AudioManager.instance.TriggerMusicState(continueMusicState);
+        SceneManager.LoadScene(continueScene);
+    }
+
     // Fade in "You Died", then Time Alive, then Score; hold; slowly fade all out; then load the next scene.
     private IEnumerator RunSequence()
     {
@@ -157,11 +196,7 @@ public class DeathSequence : MonoBehaviour
         yield return Fade(new[] { youDiedText, timeAliveText, scoreText }, 1f, 0f, fadeOutDuration);
         yield return new WaitForSecondsRealtime(endPause);
 
-        if (string.IsNullOrEmpty(continueScene)) yield break;
-
-        if (AudioManager.instance != null && !string.IsNullOrEmpty(continueMusicState))
-            AudioManager.instance.TriggerMusicState(continueMusicState);
-        SceneManager.LoadScene(continueScene);
+        LoadContinueScene();
     }
 
     private static IEnumerator Fade(TMP_Text[] texts, float from, float to, float duration)
