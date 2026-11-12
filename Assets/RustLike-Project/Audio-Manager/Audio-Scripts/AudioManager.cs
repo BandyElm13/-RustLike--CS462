@@ -11,6 +11,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip menuTheme;
     public AudioClip waveTheme;
     public AudioClip ambientTheme; // Changed from finalTheme to ambientTheme!
+    public AudioClip player_death_theme;
 
     void Awake()
     {
@@ -48,6 +49,9 @@ public class AudioManager : MonoBehaviour
                 break;
             case "ambientstart": // Matches your new ambient situation trigger!
                 selectedClip = ambientTheme;
+                break;
+            case "player_death_theme":
+                selectedClip = player_death_theme;
                 break;
         }
 
