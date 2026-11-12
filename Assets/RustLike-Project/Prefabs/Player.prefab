@@ -996,6 +996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreDisplay
   scoreTextElement: {fileID: 142499538945002822}
+  energyTextElement: {fileID: 6643024491951896505}
 --- !u!1 &4297153820939831984
 GameObject:
   m_ObjectHideFlags: 0
@@ -2268,6 +2269,11 @@ MonoBehaviour:
   playerCamera: {fileID: 39399862813292437}
   shootRange: 100
   damage: 25
+  fireRate: 1
+  chargeRate: 1
+  chargeDelay: 2
+  energyMax: 10
+  energyCost: 1
 --- !u!114 &8408892350333659932
 MonoBehaviour:
   m_ObjectHideFlags: 0
